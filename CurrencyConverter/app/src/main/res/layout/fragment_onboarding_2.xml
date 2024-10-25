@@ -27,7 +27,7 @@
             android:layout_gravity="center"
             android:layout_marginTop="20dp"
             android:fontFamily="@font/opensans_bold"
-            android:text="Instant Currency Conversion"
+            android:text="Currency Conversion"
             android:textColor="@color/subColor"
             android:textAlignment="center"
             android:textSize="26sp" />

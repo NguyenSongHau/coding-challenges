@@ -40,10 +40,12 @@
             android:layout_marginTop="20dp"
             android:fontFamily="@font/opensans_bold"
             android:lineHeight="30dp"
-            android:text="Manage your global finances with ease, thanks to seamless and accurate currency conversions, anytime, anywhere."
+            android:text="Manage your global finances with ease, thanks to seamless and accurate currency conversions."
             android:textAlignment="center"
             android:textColor="@color/subColor"
-            android:textSize="20sp" />
+            android:textSize="20sp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"/>
 
     </RelativeLayout>
 </FrameLayout>

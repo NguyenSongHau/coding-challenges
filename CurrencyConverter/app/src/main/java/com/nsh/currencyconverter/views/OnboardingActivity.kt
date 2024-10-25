@@ -27,7 +27,7 @@ class OnboardingActivity : AppCompatActivity() {
         val isFirstLaunch = sharedPreferences.getBoolean("is_first_launch", true)
 
         if (!isFirstLaunch) {
-            val intent = Intent(this, MainActivity::class.java)
+            val intent = Intent(this, BottomNavigationActivity::class.java)
             startActivity(intent)
             finish()
             return
@@ -73,7 +73,7 @@ class OnboardingActivity : AppCompatActivity() {
             val sharedPreferences = getSharedPreferences("app_prefs", MODE_PRIVATE)
             sharedPreferences.edit().putBoolean("is_first_launch", false).apply()
 
-            val intent = Intent(this, MainActivity::class.java)
+            val intent = Intent(this, BottomNavigationActivity::class.java)
             startActivity(intent)
             finish()
         }

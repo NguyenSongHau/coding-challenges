@@ -43,7 +43,9 @@
             android:text="Stay updated with live exchange rates worldwide for informed trading and travel decisions."
             android:textAlignment="center"
             android:textColor="@color/subColor"
-            android:textSize="20sp" />
+            android:textSize="20sp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"/>
 
     </RelativeLayout>
 </FrameLayout>
