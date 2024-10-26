@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Select currency"
+        android:textSize="20dp"
+        android:fontFamily="@font/opensans_bold"/>
+
+
+    <EditText
+        android:id="@+id/edtCurrency"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter currency..."
+        android:padding="12dp"
+        android:singleLine="true"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/custome_border_search"
+        android:fontFamily="@font/opensans_bold"
+        android:textSize="16sp"/>
+    
+    <ListView
+        android:id="@+id/lvCurrency"
+        android:layout_width="match_parent"
+        android:layout_height="400dp"
+        android:scrollbars="none"/>
+
+</LinearLayout>

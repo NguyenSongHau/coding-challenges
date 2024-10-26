@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
-    android:id="@+id/bottomNavigationScreen"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/bottomNavigationScreen"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -13,19 +13,19 @@
         android:id="@+id/frameContainer"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"/>
+        android:layout_weight="1" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigation"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        app:menu="@menu/bottom_menu"
-        android:background="@color/primaryColor"
-        app:itemIconTint="@color/white"
-        app:itemPaddingBottom="10dp"
-        app:itemTextColor="@color/white"
+        android:layout_height="90dp"
+        android:background="@drawable/bottom_background"
+        app:itemActiveIndicatorStyle="@style/App.Custom.Indicator"
         app:itemIconSize="30dp"
-        app:itemActiveIndicatorStyle="@style/App.Custom.Indicator"/>
+        app:itemIconTint="@color/white"
+        app:itemPaddingTop="18dp"
+        app:itemPaddingBottom="1dp"
+        app:itemTextColor="@color/white"
+        app:menu="@menu/bottom_menu" />
 
 </LinearLayout>

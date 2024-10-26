@@ -18,6 +18,7 @@ class BottomNavigationActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        supportActionBar?.hide()
         setContentView(R.layout.activity_bottom_navigation)
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.bottomNavigationScreen)) { v, insets ->
