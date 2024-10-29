@@ -21,7 +21,7 @@
         android:layout_height="wrap_content"
         android:background="@drawable/bottom_background"
         app:itemActiveIndicatorStyle="@style/App.Custom.Indicator"
-        app:itemIconSize="30dp"
+        app:itemIconSize="40dp"
         app:itemIconTint="@color/white"
         app:itemPaddingTop="24dp"
         app:itemPaddingBottom="1dp"

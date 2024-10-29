@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
+    android:padding="20dp"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -18,9 +19,10 @@
         android:id="@+id/titleDialog"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="24sp"
+        android:textSize="16sp"
         android:text="Chart"
-        android:padding="18sp"
+        android:textAlignment="center"
+        android:padding="10sp"
         android:fontFamily="@font/opensans_bold"
         android:textColor="@color/subColor" />
 
@@ -30,6 +32,5 @@
         android:layout_height="wrap_content"
         android:text="Close"
         android:fontFamily="@font/opensans_bold"
-        android:backgroundTint="@color/primaryColor"
-        android:layout_marginTop="50dp" />
+        android:backgroundTint="@color/primaryColor" />
 </LinearLayout>

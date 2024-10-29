@@ -13,6 +13,10 @@ import com.nsh.currencyconverter.views.fragments.ChartFragment
 
 class BottomNavigationActivity : AppCompatActivity() {
     private lateinit var bottomNavigationView: BottomNavigationView
+    private val homeFragment = HomeFragment()
+    private val chartFragment = ChartFragment()
+
+    private var activeFragment: Fragment = homeFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,27 +32,24 @@ class BottomNavigationActivity : AppCompatActivity() {
 
         bottomNavigationView = findViewById(R.id.bottomNavigation)
 
-        if (savedInstanceState == null) {
-            replaceFragment(HomeFragment())
-        }
+        supportFragmentManager.beginTransaction().add(R.id.frameContainer, chartFragment, "2").hide(chartFragment).commit()
+        supportFragmentManager.beginTransaction().add(R.id.frameContainer, homeFragment, "1").commit()
 
         bottomNavigationView.setOnNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.bottom_home -> {
-                    replaceFragment(HomeFragment())
+                    supportFragmentManager.beginTransaction().hide(activeFragment).show(homeFragment).commit()
+                    activeFragment = homeFragment
                     true
                 }
                 R.id.bottom_chart -> {
-                    replaceFragment(ChartFragment())
+                    supportFragmentManager.beginTransaction().hide(activeFragment).show(chartFragment).commit()
+                    activeFragment = chartFragment
                     true
                 }
                 else -> false
             }
         }
-        replaceFragment(HomeFragment())
-    }
-
-    private fun replaceFragment(fragment: Fragment) {
-        supportFragmentManager.beginTransaction().replace(R.id.frameContainer, fragment).commit()
     }
 }
+

@@ -4,7 +4,6 @@ import android.app.Dialog
 import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
-import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import com.github.mikephil.charting.charts.LineChart
@@ -15,7 +14,7 @@ import com.github.mikephil.charting.formatter.ValueFormatter
 import com.nsh.currencyconverter.R
 import com.nsh.currencyconverter.utils.formatCurrency
 
-class FullScreenDialog(
+class ChartDialog(
     context: Context,
     private val message: String,
     private val dataPoints: List<Entry>
@@ -27,7 +26,7 @@ class FullScreenDialog(
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.dialog_fullscreen)
+        setContentView(R.layout.dialog_chart)
 
         dialogMessage = findViewById(R.id.titleDialog)
         closeButton = findViewById(R.id.closeButton)
@@ -49,7 +48,7 @@ class FullScreenDialog(
         val lineDataSet = LineDataSet(formattedDataPoints, "Exchange Rates").apply {
             color = Color.BLUE
             valueTextColor = Color.BLACK
-            valueTextSize = 14f
+            valueTextSize = 12f
             valueFormatter = object : ValueFormatter() {
                 override fun getFormattedValue(value: Float): String {
                     return formatCurrency(value.toDouble())

@@ -1,6 +1,5 @@
 package com.nsh.currencyconverter.views.fragments
 
-import android.app.AlertDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -14,10 +13,12 @@ import com.nsh.currencyconverter.R
 import com.nsh.currencyconverter.adapters.ConvertedCurrencyAdapter
 import com.nsh.currencyconverter.controllers.ExchangeController
 import com.nsh.currencyconverter.models.ConvertedCurrencyItem
-import com.nsh.currencyconverter.models.CurrencyDetails
 import com.nsh.currencyconverter.utils.isWifiConnected
 import com.nsh.currencyconverter.utils.formatCurrency
+import com.nsh.currencyconverter.utils.showAlertDialog
 import com.nsh.currencyconverter.utils.showCurrencyDialog
+import com.nsh.currencyconverter.utils.hideKeyboard // Import the utility function
+import com.nsh.currencyconverter.utils.showKeyboard // Import the utility function
 
 class HomeFragment : Fragment() {
     private lateinit var convertFromDropDown: TextView
@@ -70,6 +71,17 @@ class HomeFragment : Fragment() {
             convertCurrency()
         }
 
+        amount.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                showKeyboard(requireContext(), amount)
+            }
+        }
+
+        view.setOnTouchListener { _, _ ->
+            hideKeyboard(requireContext(), view)
+            false
+        }
+
         return view
     }
 
@@ -83,20 +95,12 @@ class HomeFragment : Fragment() {
         val amountValue = amount.text.toString().toDoubleOrNull()
 
         if (!isWifiConnected(requireContext())) {
-            AlertDialog.Builder(requireContext())
-                .setTitle("Network Error")
-                .setMessage("No WiFi connection. Please check your network settings.")
-                .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
-                .show()
+            showAlertDialog(requireContext(), "Network Error", "No WiFi connection. Please check your network settings.")
             return
         }
 
         if (fromCurrency.isEmpty() || toCurrency.isEmpty() || amountValue == null) {
-            AlertDialog.Builder(requireContext())
-                .setTitle("Error")
-                .setMessage("Please enter a valid amount and select currencies!")
-                .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
-                .show()
+            showAlertDialog(requireContext(), "Error", "Please enter a valid amount and select currencies!")
             return
         }
 

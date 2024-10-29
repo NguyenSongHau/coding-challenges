@@ -1,11 +1,15 @@
 package com.nsh.currencyconverter.utils
 
+import android.app.AlertDialog
+import android.app.DatePickerDialog
 import android.app.Dialog
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ListView
 import com.nsh.currencyconverter.adapters.CurrencyAdapter
@@ -15,6 +19,7 @@ import com.nsh.currencyconverter.models.CurrencyDetails
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
@@ -56,7 +61,6 @@ fun showCurrencyDialog(
             val adapter = CurrencyAdapter(context, filteredCurrencyDetails)
             lvCurrency.adapter = adapter
 
-            // Initially display all currencies
             filteredCurrencyDetails.addAll(currencyDetailsList)
             adapter.notifyDataSetChanged()
 
@@ -85,3 +89,47 @@ fun showCurrencyDialog(
     }
 }
 
+fun showAlertDialog(context: Context, title: String, message: String) {
+    AlertDialog.Builder(context)
+        .setTitle(title)
+        .setMessage(message)
+        .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
+        .show()
+}
+
+fun showDatePickerDialog(context: Context, onDateSelected: (String) -> Unit) {
+    val calendar = Calendar.getInstance()
+    val today = calendar.timeInMillis
+    calendar.add(Calendar.DAY_OF_YEAR, -1)
+    val yesterday = calendar.timeInMillis
+
+    val datePickerDialog = DatePickerDialog(
+        context,
+        { _, selectedYear, selectedMonth, selectedDay ->
+            val selectedDate = Calendar.getInstance().apply {
+                set(selectedYear, selectedMonth, selectedDay)
+            }.time
+
+            val formattedDate = formatDate(selectedDate)
+            onDateSelected(formattedDate)
+        },
+        calendar.get(Calendar.YEAR),
+        calendar.get(Calendar.MONTH),
+        calendar.get(Calendar.DAY_OF_MONTH)
+    )
+
+    datePickerDialog.datePicker.minDate = yesterday
+    datePickerDialog.datePicker.maxDate = today
+
+    datePickerDialog.show()
+}
+
+fun showKeyboard(context: Context, view: View) {
+    val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+    imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT)
+}
+
+fun hideKeyboard(context: Context, view: View?) {
+    val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+    imm.hideSoftInputFromWindow(view?.windowToken, 0)
+}
