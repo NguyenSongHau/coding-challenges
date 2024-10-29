@@ -5,11 +5,12 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import com.nsh.currencyconverter.models.LatestResponse
 import com.nsh.currencyconverter.models.SymbolsResponse
 
 object ExchangeAPI {
-    private const val BASE_URL = "https://api.exchangeratesapi.io/v1/"
-    private const val API_KEY = "6ef4edc9ed0f2b96dcbb28b229a6b779"
+    private const val BASE_URL = "https://api.freecurrencyapi.com/v1/"
+    private const val API_KEY = "fca_live_Ih2y8xSFAXUSW68vwlBHh1CkmkAsW0xFQD2tavjF"
 
     private val retrofit: Retrofit by lazy {
         Retrofit.Builder()
@@ -19,8 +20,15 @@ object ExchangeAPI {
     }
 
     interface ExchangeApiService {
-        @GET("symbols")
-        fun getSymbols(@Query("access_key") apiKey: String = API_KEY): Call<SymbolsResponse>
+        @GET("currencies")
+        fun getSymbols(@Query("apikey") apiKey: String = API_KEY): Call<SymbolsResponse>
+
+        @GET("latest")
+        fun getLatestExchangeRate(
+            @Query("apikey") apiKey: String = API_KEY,
+            @Query("base_currency") baseCurrency: String,
+            @Query("currencies") currencies: String? = null
+        ): Call<LatestResponse>
     }
 
     val service: ExchangeApiService by lazy {

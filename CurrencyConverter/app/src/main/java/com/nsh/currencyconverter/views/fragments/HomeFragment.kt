@@ -7,18 +7,30 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
+import android.widget.Button
 import android.widget.EditText
+import android.widget.GridView
 import android.widget.ListView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.nsh.currencyconverter.R
+import com.nsh.currencyconverter.adapters.ConvertedCurrencyAdapter
+import com.nsh.currencyconverter.adapters.CurrencyAdapter
 import com.nsh.currencyconverter.controllers.ExchangeController
+import com.nsh.currencyconverter.models.ConvertedCurrencyItem
+import com.nsh.currencyconverter.models.CurrencyDetails
+import java.text.DecimalFormat
 
 class HomeFragment : Fragment() {
     private lateinit var convertFromDropDown: TextView
     private lateinit var convertToDropDown: TextView
+    private lateinit var amount: EditText
+    private lateinit var result: TextView
+    private lateinit var exchangeButton: Button
+    private lateinit var currencyGridView: GridView
+    private lateinit var currencyGridAdapter: ConvertedCurrencyAdapter
     private val exchangeController = ExchangeController()
+    private var filteredCurrencyDetails = listOf<CurrencyDetails>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -29,6 +41,13 @@ class HomeFragment : Fragment() {
 
         convertFromDropDown = view.findViewById(R.id.convertFromDropDown)
         convertToDropDown = view.findViewById(R.id.convertToDropDown)
+        amount = view.findViewById(R.id.amount)
+        result = view.findViewById(R.id.result)
+        exchangeButton = view.findViewById(R.id.exchangeButton)
+        currencyGridView = view.findViewById(R.id.currencyGridView)
+
+        currencyGridAdapter = ConvertedCurrencyAdapter(requireContext(), mutableListOf())
+        currencyGridView.adapter = currencyGridAdapter
 
         convertFromDropDown.setOnClickListener {
             showCurrencyDialog { selectedCurrency ->
@@ -42,8 +61,66 @@ class HomeFragment : Fragment() {
             }
         }
 
+        exchangeButton.setOnClickListener {
+            convertCurrency()
+        }
+
         return view
     }
+
+    private fun convertCurrency() {
+        val fromCurrency = convertFromDropDown.text.toString()
+        val toCurrency = convertToDropDown.text.toString()
+        val amountValue = amount.text.toString().toDoubleOrNull()
+
+        if (fromCurrency.isEmpty() || toCurrency.isEmpty() || amountValue == null) {
+            result.text = "Please enter a valid amount and select currencies!"
+            return
+        }
+
+        exchangeController.fetchLatestExchangeRate(baseCurrency = fromCurrency) { rates ->
+            if (rates != null) {
+                val exchangeRate = rates[toCurrency]
+                if (exchangeRate != null) {
+                    val resultValue = amountValue * exchangeRate
+
+                    val formattedAmount = if (amountValue % 1.0 == 0.0) {
+                        amountValue.toInt().toString()
+                    } else {
+                        DecimalFormat("#,##0.00").format(amountValue)
+                    }
+
+                    val formattedResult = if (resultValue % 1.0 == 0.0) {
+                        resultValue.toInt().toString()
+                    } else {
+                        DecimalFormat("#,##0.00").format(resultValue)
+                    }
+
+                    result.text = "$formattedAmount $fromCurrency = $formattedResult $toCurrency"
+
+                    fetchLatestExchangeRates()
+                } else {
+                    result.text = "Exchange rate not found"
+                }
+            } else {
+                result.text = "Error fetching rate"
+            }
+        }
+    }
+
+    private fun fetchLatestExchangeRates() {
+        exchangeController.fetchLatestExchangeRate(baseCurrency = convertFromDropDown.text.toString()) { rates ->
+            if (rates != null) {
+                val convertedItems = rates.map { (currency, rate) ->
+                    ConvertedCurrencyItem(currency, rate.toString())
+                }
+                currencyGridAdapter.updateData(convertedItems)
+            } else {
+                result.text = "Error fetching latest exchange rates!"
+            }
+        }
+    }
+
 
     private fun showCurrencyDialog(onCurrencySelected: (String) -> Unit) {
         val dialog = Dialog(requireContext())
@@ -54,10 +131,12 @@ class HomeFragment : Fragment() {
 
         exchangeController.fetchSymbols { symbols ->
             symbols?.let {
-                val currencyNames = it.values.toList()
+                val currencyDetailsList = it.map { entry -> entry.value }
                 val currencyCodes = it.keys.toList()
-                val filteredCurrencyNames = currencyNames.toMutableList()
-                val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, filteredCurrencyNames)
+
+                filteredCurrencyDetails = currencyDetailsList.toList()
+
+                val adapter = CurrencyAdapter(requireContext(), filteredCurrencyDetails)
                 lvCurrency.adapter = adapter
 
                 searchEditText.addTextChangedListener(object : TextWatcher {
@@ -67,15 +146,16 @@ class HomeFragment : Fragment() {
 
                     override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                         val query = s.toString().lowercase()
-                        val newFilteredCurrencyNames = currencyNames.filter { it.lowercase().contains(query) }
+                        filteredCurrencyDetails = currencyDetailsList.filter { it.name.lowercase().contains(query) }
+
                         adapter.clear()
-                        adapter.addAll(newFilteredCurrencyNames)
+                        adapter.addAll(filteredCurrencyDetails)
                         adapter.notifyDataSetChanged()
                     }
                 })
 
                 lvCurrency.setOnItemClickListener { _, _, position, _ ->
-                    val selectedCurrencyCode = currencyCodes[currencyNames.indexOf(filteredCurrencyNames[position])]
+                    val selectedCurrencyCode = currencyCodes[currencyDetailsList.indexOf(filteredCurrencyDetails[position])]
                     onCurrencySelected(selectedCurrencyCode)
                     dialog.dismiss()
                 }
@@ -84,5 +164,4 @@ class HomeFragment : Fragment() {
             }
         }
     }
-
 }
