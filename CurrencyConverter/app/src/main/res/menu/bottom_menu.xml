@@ -17,11 +17,4 @@
         android:layout_height="wrap_content"
         android:icon="@drawable/ic_chart"
         android:title="Chart"/>
-
-    <item
-        android:id="@+id/bottom_setting"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:icon="@drawable/ic_setting"
-        android:title="Setting"/>
 </menu>

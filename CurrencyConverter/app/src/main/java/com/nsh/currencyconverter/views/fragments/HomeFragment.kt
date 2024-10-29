@@ -1,27 +1,23 @@
 package com.nsh.currencyconverter.views.fragments
 
 import android.app.AlertDialog
-import android.app.Dialog
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.GridView
-import android.widget.ListView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.nsh.currencyconverter.R
 import com.nsh.currencyconverter.adapters.ConvertedCurrencyAdapter
-import com.nsh.currencyconverter.adapters.CurrencyAdapter
 import com.nsh.currencyconverter.controllers.ExchangeController
 import com.nsh.currencyconverter.models.ConvertedCurrencyItem
 import com.nsh.currencyconverter.models.CurrencyDetails
 import com.nsh.currencyconverter.utils.isWifiConnected
 import com.nsh.currencyconverter.utils.formatCurrency
+import com.nsh.currencyconverter.utils.showCurrencyDialog
 
 class HomeFragment : Fragment() {
     private lateinit var convertFromDropDown: TextView
@@ -32,7 +28,9 @@ class HomeFragment : Fragment() {
     private lateinit var currencyGridView: GridView
     private lateinit var currencyGridAdapter: ConvertedCurrencyAdapter
     private val exchangeController = ExchangeController()
-    private var filteredCurrencyDetails = listOf<CurrencyDetails>()
+
+    private var fromCurrency: String = ""
+    private var toCurrency: String = ""
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -55,11 +53,17 @@ class HomeFragment : Fragment() {
         currencyGridView.adapter = currencyGridAdapter
 
         convertFromDropDown.setOnClickListener {
-            showCurrencyDialog { selectedCurrency -> convertFromDropDown.text = selectedCurrency }
+            showCurrencySelectionDialog { selectedCurrency ->
+                fromCurrency = selectedCurrency
+                convertFromDropDown.text = selectedCurrency
+            }
         }
 
         convertToDropDown.setOnClickListener {
-            showCurrencyDialog { selectedCurrency -> convertToDropDown.text = selectedCurrency }
+            showCurrencySelectionDialog { selectedCurrency ->
+                toCurrency = selectedCurrency
+                convertToDropDown.text = selectedCurrency
+            }
         }
 
         exchangeButton.setOnClickListener {
@@ -69,9 +73,13 @@ class HomeFragment : Fragment() {
         return view
     }
 
+    private fun showCurrencySelectionDialog(onCurrencySelected: (String) -> Unit) {
+        showCurrencyDialog(requireContext()) { selectedCurrency ->
+            onCurrencySelected(selectedCurrency)
+        }
+    }
+
     private fun convertCurrency() {
-        val fromCurrency = convertFromDropDown.text.toString()
-        val toCurrency = convertToDropDown.text.toString()
         val amountValue = amount.text.toString().toDoubleOrNull()
 
         if (!isWifiConnected(requireContext())) {
@@ -114,56 +122,14 @@ class HomeFragment : Fragment() {
     }
 
     private fun fetchLatestExchangeRates(amountValue: Double) {
-        exchangeController.fetchLatestExchangeRate(baseCurrency = convertFromDropDown.text.toString()) { rates ->
+        exchangeController.fetchLatestExchangeRate(baseCurrency = fromCurrency) { rates ->
             if (rates != null) {
                 val convertedItems = rates.map { (currency, rate) ->
                     ConvertedCurrencyItem(currency, rate.toString())
                 }
                 currencyGridAdapter.updateData(convertedItems, amountValue)
             } else {
-                result.text = "Error fetching latesat exchange rates!"
-            }
-        }
-    }
-
-    private fun showCurrencyDialog(onCurrencySelected: (String) -> Unit) {
-        val dialog = Dialog(requireContext())
-        dialog.setContentView(R.layout.spinner)
-
-        val lvCurrency = dialog.findViewById<ListView>(R.id.lvCurrency)
-        val searchEditText = dialog.findViewById<EditText>(R.id.edtCurrency)
-
-        exchangeController.fetchSymbols { symbols ->
-            symbols?.let {
-                val currencyDetailsList = it.map { entry -> entry.value }
-                val currencyCodes = it.keys.toList()
-
-                filteredCurrencyDetails = currencyDetailsList.toList()
-                val adapter = CurrencyAdapter(requireContext(), filteredCurrencyDetails)
-                lvCurrency.adapter = adapter
-
-                searchEditText.addTextChangedListener(object : TextWatcher {
-                    override fun afterTextChanged(s: Editable?) {}
-
-                    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
-                    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                        val query = s.toString().lowercase()
-                        filteredCurrencyDetails = currencyDetailsList.filter { it.name.lowercase().contains(query) }
-
-                        adapter.clear()
-                        adapter.addAll(filteredCurrencyDetails)
-                        adapter.notifyDataSetChanged()
-                    }
-                })
-
-                lvCurrency.setOnItemClickListener { _, _, position, _ ->
-                    val selectedCurrencyCode = currencyCodes[currencyDetailsList.indexOf(filteredCurrencyDetails[position])]
-                    onCurrencySelected(selectedCurrencyCode)
-                    dialog.dismiss()
-                }
-
-                dialog.show()
+                result.text = "Error fetching latest exchange rates!"
             }
         }
     }

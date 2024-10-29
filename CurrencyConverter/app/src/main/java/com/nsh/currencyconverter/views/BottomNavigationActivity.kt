@@ -10,7 +10,6 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.nsh.currencyconverter.R
 import com.nsh.currencyconverter.views.fragments.HomeFragment
 import com.nsh.currencyconverter.views.fragments.ChartFragment
-import com.nsh.currencyconverter.views.fragments.SettingFragment
 
 class BottomNavigationActivity : AppCompatActivity() {
     private lateinit var bottomNavigationView: BottomNavigationView
@@ -41,10 +40,6 @@ class BottomNavigationActivity : AppCompatActivity() {
                 }
                 R.id.bottom_chart -> {
                     replaceFragment(ChartFragment())
-                    true
-                }
-                R.id.bottom_setting -> {
-                    replaceFragment(SettingFragment())
                     true
                 }
                 else -> false

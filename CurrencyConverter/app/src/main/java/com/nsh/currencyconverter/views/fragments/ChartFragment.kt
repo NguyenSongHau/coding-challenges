@@ -14,11 +14,14 @@ import android.widget.EditText
 import android.widget.ListView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import com.github.mikephil.charting.data.Entry
 import com.nsh.currencyconverter.R
 import com.nsh.currencyconverter.adapters.CurrencyAdapter
 import com.nsh.currencyconverter.controllers.ExchangeController
 import com.nsh.currencyconverter.models.CurrencyDetails
+import com.nsh.currencyconverter.utils.formatCurrency
 import com.nsh.currencyconverter.utils.formatDate
+import com.nsh.currencyconverter.views.dialog.FullScreenDialog
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -46,6 +49,7 @@ class ChartFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_chart, container, false)
 
+        // Initialize UI components
         convertFromDropDown = view.findViewById(R.id.convertFromDropDown)
         convertToDropDown = view.findViewById(R.id.convertToDropDown)
         amount = view.findViewById(R.id.amount)
@@ -54,6 +58,13 @@ class ChartFragment : Fragment() {
         exchangeButton = view.findViewById(R.id.exchangeButton)
         resultTextView = view.findViewById(R.id.resultTextView)
 
+        // Set up listeners
+        setUpListeners()
+
+        return view
+    }
+
+    private fun setUpListeners() {
         convertFromDropDown.setOnClickListener {
             showCurrencyDialog { selectedCurrency ->
                 fromCurrency = selectedCurrency
@@ -81,47 +92,62 @@ class ChartFragment : Fragment() {
         }
 
         exchangeButton.setOnClickListener {
-            val amountString = amount.text.toString()
-            amountValue = amountString.toDoubleOrNull()
+            handleExchangeButtonClick()
+        }
+    }
 
-            val fromDateString = fromDateTextView.text.toString()
-            val toDateString = toDateTextView.text.toString()
+    private fun handleExchangeButtonClick() {
+        val amountString = amount.text.toString()
+        amountValue = amountString.toDoubleOrNull()
 
-            if (fromCurrency.isEmpty() || toCurrency.isEmpty() || amountValue == null) {
-                showAlertDialog("Error", "Please enter a valid amount and select currencies!")
-                return@setOnClickListener
-            }
+        val fromDateString = fromDateTextView.text.toString()
+        val toDateString = toDateTextView.text.toString()
 
-            if (fromDateString.isEmpty() || toDateString.isEmpty()) {
-                showAlertDialog("Error", "Please select both From date and To date!")
-                return@setOnClickListener
-            }
-
-            fetchHistoricalExchangeRate(fromCurrency, toCurrency, fromDateString) { exchangeRate ->
-                if (exchangeRate != null) {
-                    resultTextView.text = String.format("%.4f", exchangeRate * amountValue!!)
-                } else {
-                    resultTextView.text = "Error fetching exchange rate"
-                }
-            }
-
-            exchangeController.fetchLatestExchangeRate(baseCurrency = fromCurrency, currencies = toCurrency) { exchangeRates ->
-                if (exchangeRates != null) {
-                    val exchangeRate = exchangeRates[toCurrency]
-                    if (exchangeRate != null) {
-                        resultTextView.text = String.format("%.4f", exchangeRate * amountValue!!)
-                    } else {
-                        resultTextView.text = "Error fetching exchange rate"
-                    }
-                } else {
-                    resultTextView.text = "Error fetching exchange rate"
-                }
-            }
-
-            showFullScreenDialog("Exchange successful!")
+        if (fromCurrency.isEmpty() || toCurrency.isEmpty() || amountValue == null) {
+            showAlertDialog("Error", "Please enter a valid amount and select currencies!")
+            return
         }
 
-        return view
+        if (fromDateString.isEmpty() || toDateString.isEmpty()) {
+            showAlertDialog("Error", "Please select both From date and To date!")
+            return
+        }
+
+        // Fetch historical exchange rate
+        fetchHistoricalExchangeRate(fromCurrency, toCurrency, fromDateString) { historicalRate ->
+            // Fetch latest exchange rate
+            exchangeController.fetchLatestExchangeRate(baseCurrency = fromCurrency, currencies = toCurrency) { latestRates ->
+                val dataPoints = mutableListOf<Entry>()
+
+                // Calculate historical converted value
+                var historicalConvertedValue: Double? = null
+                historicalRate?.let {
+                    historicalConvertedValue = it * amountValue!! // Multiply historical rate by amount
+                    dataPoints.add(Entry(0f, historicalConvertedValue!!.toFloat())) // Index 0 for historical rate
+                }
+
+                // Calculate latest converted value
+                var latestConvertedValue: Double? = null
+                latestRates?.let {
+                    val latestRate = it[toCurrency]
+                    latestRate?.let { rate ->
+                        latestConvertedValue = rate * amountValue!! // Multiply latest rate by amount
+                        dataPoints.add(Entry(1f, latestConvertedValue!!.toFloat())) // Index 1 for latest rate
+                    }
+                }
+
+                // Format values for display
+                val formattedHistoricalValue = historicalConvertedValue?.let { formatCurrency(it) } ?: "N/A"
+                val formattedLatestValue = latestConvertedValue?.let { formatCurrency(it) } ?: "N/A"
+
+                // Show message and calculated values
+                val message = "Exchange rates from $fromCurrency to $toCurrency\n" +
+                        "Historical: $formattedHistoricalValue\n" +
+                        "Latest: $formattedLatestValue"
+                val dialog = FullScreenDialog(requireContext(), message, dataPoints)
+                dialog.show()
+            }
+        }
     }
 
     private fun showDatePickerDialog(onDateSelected: (String) -> Unit) {
@@ -205,23 +231,6 @@ class ChartFragment : Fragment() {
             .setMessage(message)
             .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
             .show()
-    }
-
-    private fun showFullScreenDialog(message: String) {
-        val dialog = Dialog(requireContext())
-        dialog.setContentView(R.layout.dialog_fullscreen)
-        dialog.setCancelable(false)
-
-        val dialogMessage = dialog.findViewById<TextView>(R.id.dialogMessage)
-        val closeButton = dialog.findViewById<Button>(R.id.closeButton)
-
-        dialogMessage.text = message
-
-        closeButton.setOnClickListener {
-            dialog.dismiss()
-        }
-
-        dialog.show()
     }
 
     private fun parseDate(dateString: String, pattern: String = "yyyy-MM-dd"): Date? {
