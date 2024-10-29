@@ -1,0 +1,6 @@
+# Array Manipulation And Missing Number Problem By Binary Tree
+Project structure:
+* Node.java: It can be used in algorithms for searching, sorting, or solving array manipulation and missing number problems using a binary tree.
+* BinarySearchTree.java: This class is used to manage and search data in a binary search tree, and it can identify missing numbers within a specified range by leveraging the "Binary Search Tree" search functionality.
+* ArrayManipulationAndMissingNumberProblemByBinaryTree.java: This file defines a main class, ArrayManipulationAndMissingNumberProblemByBinaryTree, which uses a BinarySearchTree to find missing numbers in an array. It initializes an array of integers, inserts each element into the binary search tree, and then calls findMissingNumbers to identify any missing numbers within a specified range. The missing numbers are printed if found; otherwise, a message indicates there are no missing numbers.
+* Note: You should use Apache Netbeans IDE 23 and use SDK 21 to run project
