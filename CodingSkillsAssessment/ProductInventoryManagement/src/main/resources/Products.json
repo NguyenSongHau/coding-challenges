@@ -1,0 +1,24 @@
+{
+  "products": [
+    {
+      "name": "Laptop",
+      "price": 999.99,
+      "quantity": 5
+    },
+    {
+      "name": "Smartphone",
+      "price": 499.99,
+      "quantity": 10
+    },
+    {
+      "name": "Tablet",
+      "price": 299.99,
+      "quantity": 0
+    },
+    {
+      "name": "Smartwatch",
+      "price": 199.99,
+      "quantity": 3
+    }
+  ]
+}

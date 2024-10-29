@@ -2,6 +2,7 @@ package com.nsh.currencyconverter.controllers
 
 import com.nsh.currencyconverter.api.ExchangeAPI
 import com.nsh.currencyconverter.models.CurrencyDetails
+import com.nsh.currencyconverter.models.HistoricalResponse
 import com.nsh.currencyconverter.models.LatestResponse
 import com.nsh.currencyconverter.models.SymbolsResponse
 import retrofit2.Call
@@ -37,6 +38,23 @@ class ExchangeController {
             }
 
             override fun onFailure(call: Call<LatestResponse>, t: Throwable) {
+                onResult(null)
+            }
+        })
+    }
+
+    fun fetchHistoricalExchangeRate(baseCurrency: String, currencies: String, dateTo: String, onResult: (Double?) -> Unit) {
+        ExchangeAPI.service.getHistoricalExchangeRate(baseCurrency = baseCurrency, currencies = currencies, dateTo = dateTo).enqueue(object : Callback<HistoricalResponse> {
+            override fun onResponse(call: Call<HistoricalResponse>, response: Response<HistoricalResponse>) {
+                if (response.isSuccessful) {
+                    val exchangeRate = response.body()?.data?.get(dateTo)?.get(currencies)
+                    onResult(exchangeRate)
+                } else {
+                    onResult(null)
+                }
+            }
+
+            override fun onFailure(call: Call<HistoricalResponse>, t: Throwable) {
                 onResult(null)
             }
         })

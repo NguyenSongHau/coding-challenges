@@ -7,6 +7,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import com.nsh.currencyconverter.models.LatestResponse
 import com.nsh.currencyconverter.models.SymbolsResponse
+import com.nsh.currencyconverter.models.HistoricalResponse // Thêm import cho mô hình HistoricalResponse
 
 object ExchangeAPI {
     private const val BASE_URL = "https://api.freecurrencyapi.com/v1/"
@@ -29,6 +30,14 @@ object ExchangeAPI {
             @Query("base_currency") baseCurrency: String,
             @Query("currencies") currencies: String? = null
         ): Call<LatestResponse>
+
+        @GET("historical")
+        fun getHistoricalExchangeRate(
+            @Query("apikey") apiKey: String = API_KEY,
+            @Query("base_currency") baseCurrency: String,
+            @Query("currencies") currencies: String,
+            @Query("date_to") dateTo: String
+        ): Call<HistoricalResponse>
     }
 
     val service: ExchangeApiService by lazy {

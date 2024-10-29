@@ -32,7 +32,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
                     android:fontFamily="@font/opensans_bold"
-                    android:text="Currency Converter"
+                    android:text="Chart Currency Converter"
                     android:textAlignment="center"
                     android:textColor="@color/subColor"
                     android:textSize="26sp" />
@@ -210,6 +210,17 @@
                                 app:drawableEndCompat="@drawable/ic_calender" />/>
                         </LinearLayout>
                     </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/resultTextView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:fontFamily="@font/opensans_bold"
+                        android:text="Result will be displayed here"
+                        android:textColor="@color/subColor"
+                        android:textSize="18sp"
+                         />
 
                     <Button
                         android:id="@+id/exchangeButton"

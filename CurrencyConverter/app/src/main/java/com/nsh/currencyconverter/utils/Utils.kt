@@ -5,6 +5,8 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
+import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.Locale
 
 fun isWifiConnected(context: Context): Boolean {
@@ -17,4 +19,9 @@ fun isWifiConnected(context: Context): Boolean {
 fun formatCurrency(value: Double): String {
     val decimalFormat = DecimalFormat("#,##0.00", DecimalFormatSymbols(Locale.US))
     return decimalFormat.format(value)
+}
+
+fun formatDate(date: Date, pattern: String = "yyyy-MM-dd"): String {
+    val dateFormat = SimpleDateFormat(pattern, Locale.getDefault())
+    return dateFormat.format(date)
 }

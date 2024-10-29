@@ -23,3 +23,7 @@ data class ConvertedCurrencyItem(
     val name: String,
     val value: String
 )
+
+data class HistoricalResponse(
+    val data: Map<String, Map<String, Double>>
+)
