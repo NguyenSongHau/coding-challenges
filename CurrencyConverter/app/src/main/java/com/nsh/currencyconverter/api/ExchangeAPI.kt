@@ -7,7 +7,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import com.nsh.currencyconverter.models.LatestResponse
 import com.nsh.currencyconverter.models.SymbolsResponse
-import com.nsh.currencyconverter.models.HistoricalResponse // Thêm import cho mô hình HistoricalResponse
+import com.nsh.currencyconverter.models.HistoricalResponse
 
 object ExchangeAPI {
     private const val BASE_URL = "https://api.freecurrencyapi.com/v1/"

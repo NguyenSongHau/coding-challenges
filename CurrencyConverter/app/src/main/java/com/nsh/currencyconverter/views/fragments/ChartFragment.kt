@@ -17,7 +17,7 @@ import com.nsh.currencyconverter.utils.showAlertDialog
 import com.nsh.currencyconverter.utils.showCurrencyDialog
 import com.nsh.currencyconverter.utils.showDatePickerDialog
 import com.nsh.currencyconverter.utils.showKeyboard
-import com.nsh.currencyconverter.views.dialog.ChartDialog
+import com.nsh.currencyconverter.views.dialogs.ChartDialog
 
 class ChartFragment : Fragment() {
     private lateinit var convertFromDropDown: TextView

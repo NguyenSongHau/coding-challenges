@@ -1,4 +1,4 @@
-package com.nsh.currencyconverter.views.dialog
+package com.nsh.currencyconverter.views.dialogs
 
 import android.app.Dialog
 import android.content.Context
