@@ -8,10 +8,14 @@ import android.widget.BaseAdapter
 import android.widget.TextView
 import com.nsh.currencyconverter.R
 import com.nsh.currencyconverter.models.ConvertedCurrencyItem
+import java.text.DecimalFormat
+import java.text.DecimalFormatSymbols
+import java.util.Locale
 
 class ConvertedCurrencyAdapter(
     private val context: Context,
-    private var items: List<ConvertedCurrencyItem>
+    private var items: List<ConvertedCurrencyItem>,
+    private var amount: Double
 ) : BaseAdapter() {
 
     override fun getCount(): Int = items.size
@@ -28,14 +32,19 @@ class ConvertedCurrencyAdapter(
 
         val currencyItem = getItem(position)
 
+        val decimalFormat = DecimalFormat("#,##0.00", DecimalFormatSymbols(Locale.US))
+
         currencyNameTextView.text = currencyItem.name
-        currencyValueTextView.text = currencyItem.value
+
+        val convertedAmount = amount * (currencyItem.value.toDoubleOrNull() ?: 0.0)
+        currencyValueTextView.text = decimalFormat.format(convertedAmount)
 
         return view
     }
 
-    fun updateData(newItems: List<ConvertedCurrencyItem>) {
+    fun updateData(newItems: List<ConvertedCurrencyItem>, newAmount: Double) {
         items = newItems
+        amount = newAmount
         notifyDataSetChanged()
     }
 }

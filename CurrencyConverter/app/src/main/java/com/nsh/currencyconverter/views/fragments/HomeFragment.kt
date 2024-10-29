@@ -1,5 +1,6 @@
 package com.nsh.currencyconverter.views.fragments
 
+import android.app.AlertDialog
 import android.app.Dialog
 import android.os.Bundle
 import android.text.Editable
@@ -19,7 +20,8 @@ import com.nsh.currencyconverter.adapters.CurrencyAdapter
 import com.nsh.currencyconverter.controllers.ExchangeController
 import com.nsh.currencyconverter.models.ConvertedCurrencyItem
 import com.nsh.currencyconverter.models.CurrencyDetails
-import java.text.DecimalFormat
+import com.nsh.currencyconverter.utils.isWifiConnected
+import com.nsh.currencyconverter.utils.formatCurrency
 
 class HomeFragment : Fragment() {
     private lateinit var convertFromDropDown: TextView
@@ -37,6 +39,9 @@ class HomeFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        requireActivity().window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
+        requireActivity().actionBar?.hide()
+
         val view = inflater.inflate(R.layout.fragment_home, container, false)
 
         convertFromDropDown = view.findViewById(R.id.convertFromDropDown)
@@ -46,19 +51,15 @@ class HomeFragment : Fragment() {
         exchangeButton = view.findViewById(R.id.exchangeButton)
         currencyGridView = view.findViewById(R.id.currencyGridView)
 
-        currencyGridAdapter = ConvertedCurrencyAdapter(requireContext(), mutableListOf())
+        currencyGridAdapter = ConvertedCurrencyAdapter(requireContext(), emptyList(), 1.0)
         currencyGridView.adapter = currencyGridAdapter
 
         convertFromDropDown.setOnClickListener {
-            showCurrencyDialog { selectedCurrency ->
-                convertFromDropDown.text = selectedCurrency
-            }
+            showCurrencyDialog { selectedCurrency -> convertFromDropDown.text = selectedCurrency }
         }
 
         convertToDropDown.setOnClickListener {
-            showCurrencyDialog { selectedCurrency ->
-                convertToDropDown.text = selectedCurrency
-            }
+            showCurrencyDialog { selectedCurrency -> convertToDropDown.text = selectedCurrency }
         }
 
         exchangeButton.setOnClickListener {
@@ -73,8 +74,21 @@ class HomeFragment : Fragment() {
         val toCurrency = convertToDropDown.text.toString()
         val amountValue = amount.text.toString().toDoubleOrNull()
 
+        if (!isWifiConnected(requireContext())) {
+            AlertDialog.Builder(requireContext())
+                .setTitle("Network Error")
+                .setMessage("No WiFi connection. Please check your network settings.")
+                .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
+                .show()
+            return
+        }
+
         if (fromCurrency.isEmpty() || toCurrency.isEmpty() || amountValue == null) {
-            result.text = "Please enter a valid amount and select currencies!"
+            AlertDialog.Builder(requireContext())
+                .setTitle("Error")
+                .setMessage("Please enter a valid amount and select currencies!")
+                .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
+                .show()
             return
         }
 
@@ -84,21 +98,12 @@ class HomeFragment : Fragment() {
                 if (exchangeRate != null) {
                     val resultValue = amountValue * exchangeRate
 
-                    val formattedAmount = if (amountValue % 1.0 == 0.0) {
-                        amountValue.toInt().toString()
-                    } else {
-                        DecimalFormat("#,##0.00").format(amountValue)
-                    }
-
-                    val formattedResult = if (resultValue % 1.0 == 0.0) {
-                        resultValue.toInt().toString()
-                    } else {
-                        DecimalFormat("#,##0.00").format(resultValue)
-                    }
+                    val formattedAmount = formatCurrency(amountValue)
+                    val formattedResult = formatCurrency(resultValue)
 
                     result.text = "$formattedAmount $fromCurrency = $formattedResult $toCurrency"
 
-                    fetchLatestExchangeRates()
+                    fetchLatestExchangeRates(amountValue)
                 } else {
                     result.text = "Exchange rate not found"
                 }
@@ -108,19 +113,18 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun fetchLatestExchangeRates() {
+    private fun fetchLatestExchangeRates(amountValue: Double) {
         exchangeController.fetchLatestExchangeRate(baseCurrency = convertFromDropDown.text.toString()) { rates ->
             if (rates != null) {
                 val convertedItems = rates.map { (currency, rate) ->
                     ConvertedCurrencyItem(currency, rate.toString())
                 }
-                currencyGridAdapter.updateData(convertedItems)
+                currencyGridAdapter.updateData(convertedItems, amountValue)
             } else {
-                result.text = "Error fetching latest exchange rates!"
+                result.text = "Error fetching latesat exchange rates!"
             }
         }
     }
-
 
     private fun showCurrencyDialog(onCurrencySelected: (String) -> Unit) {
         val dialog = Dialog(requireContext())
@@ -135,7 +139,6 @@ class HomeFragment : Fragment() {
                 val currencyCodes = it.keys.toList()
 
                 filteredCurrencyDetails = currencyDetailsList.toList()
-
                 val adapter = CurrencyAdapter(requireContext(), filteredCurrencyDetails)
                 lvCurrency.adapter = adapter
 

@@ -41,7 +41,7 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@id/title"
                     android:layout_marginStart="10dp"
-                    android:layout_marginTop="10dp"
+
                     android:layout_marginEnd="10dp"
                     android:orientation="vertical"
                     android:paddingTop="10dp"
@@ -184,26 +184,33 @@
             </RelativeLayout>
         </androidx.cardview.widget.CardView>
 
-        <TextView
-            android:id="@+id/titleSomeCurrency"
+        <LinearLayout
             android:layout_below="@id/cvCurrency"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Some other currency"
-            android:fontFamily="@font/opensans_bold"
-            android:textSize="20sp"
-            android:textAlignment="center"
-            android:layout_marginVertical="16dp"/>
+            android:orientation="vertical">
 
-        <GridView
-            android:scrollbars="none"
-            android:id="@+id/currencyGridView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:numColumns="3"
-            android:verticalSpacing="10dp"
-            android:horizontalSpacing="10dp"
-            android:layout_below="@id/titleSomeCurrency" />
+            <TextView
+                android:id="@+id/titleSomeCurrency"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Some other currency"
+                android:fontFamily="@font/opensans_bold"
+                android:textSize="20sp"
+                android:textAlignment="center"
+                android:layout_marginVertical="16dp"/>
+
+            <GridView
+                android:scrollbars="none"
+                android:id="@+id/currencyGridView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:numColumns="3"
+                android:verticalSpacing="10dp"
+                android:horizontalSpacing="10dp"
+                android:layout_below="@id/titleSomeCurrency" />
+
+        </LinearLayout>
 
     </RelativeLayout>
 
