@@ -13,6 +13,7 @@ import com.nsh.currencyconverter.R
 import com.nsh.currencyconverter.controllers.ExchangeController
 import com.nsh.currencyconverter.models.CurrencyDetails
 import com.nsh.currencyconverter.utils.hideKeyboard
+import com.nsh.currencyconverter.utils.isWifiConnected
 import com.nsh.currencyconverter.utils.showAlertDialog
 import com.nsh.currencyconverter.utils.showCurrencyDialog
 import com.nsh.currencyconverter.utils.showDatePickerDialog
@@ -102,6 +103,11 @@ class ChartFragment : Fragment() {
 
         val fromDateString = fromDateTextView.text.toString()
         val toDateString = toDateTextView.text.toString()
+
+        if (!isWifiConnected(requireContext())) {
+            showAlertDialog(requireContext(), "Network Error", "No WiFi connection. Please check your network settings.")
+            return
+        }
 
         if (fromCurrency.isEmpty() || toCurrency.isEmpty() || amountValue == null) {
             showAlertDialog(requireContext(), "Error", "Please enter a valid amount and select currencies!")
