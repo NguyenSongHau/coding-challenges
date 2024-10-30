@@ -75,7 +75,7 @@
                             android:fontFamily="@font/opensans_bold"
                             android:hint="Please enter amount"
                             android:inputType="numberDecimal"
-                            android:textSize="14sp" />
+                            android:textSize="12sp" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -111,7 +111,7 @@
                                 android:fontFamily="@font/opensans_bold"
                                 android:hint="Select currency"
                                 android:textColor="@color/subColor"
-                                android:textSize="14sp"
+                                android:textSize="12sp"
                                 app:drawableEndCompat="@drawable/ic_arrow_down" />
                         </LinearLayout>
 
@@ -140,7 +140,7 @@
                                 android:fontFamily="@font/opensans_bold"
                                 android:hint="Select currency"
                                 android:textColor="@color/subColor"
-                                android:textSize="14sp"
+                                android:textSize="12sp"
                                 app:drawableEndCompat="@drawable/ic_arrow_down" />
                         </LinearLayout>
                     </LinearLayout>
@@ -176,7 +176,7 @@
                                 android:fontFamily="@font/opensans_bold"
                                 android:hint="Select date"
                                 android:textColor="@color/subColor"
-                                android:textSize="14sp"
+                                android:textSize="12sp"
                                 app:drawableEndCompat="@drawable/ic_calender" />
                         </LinearLayout>
 
@@ -206,7 +206,7 @@
                                 android:fontFamily="@font/opensans_bold"
                                 android:hint="Select date"
                                 android:textColor="@color/subColor"
-                                android:textSize="14sp"
+                                android:textSize="12sp"
                                 app:drawableEndCompat="@drawable/ic_calender" />/>
                         </LinearLayout>
                     </LinearLayout>

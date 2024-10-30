@@ -17,8 +17,8 @@ import com.nsh.currencyconverter.utils.isWifiConnected
 import com.nsh.currencyconverter.utils.formatCurrency
 import com.nsh.currencyconverter.utils.showAlertDialog
 import com.nsh.currencyconverter.utils.showCurrencyDialog
-import com.nsh.currencyconverter.utils.hideKeyboard // Import the utility function
-import com.nsh.currencyconverter.utils.showKeyboard // Import the utility function
+import com.nsh.currencyconverter.utils.hideKeyboard
+import com.nsh.currencyconverter.utils.showKeyboard
 
 class HomeFragment : Fragment() {
     private lateinit var convertFromDropDown: TextView

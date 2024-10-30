@@ -14,3 +14,4 @@
   * Users are allowed to enter values ​​and select the currency they want to convert. In addition, after conversion, application will display conversions of other currencies.
   * The user enters the value, selects the currency to be converted and selects the time period. The application will display a line chart so that the user can easily track the conversion value fluctuations.
   * The application checks user input and also checks whether there is internet or not.
+* Link video demo: https://drive.google.com/file/d/1OmLzzHUpvN097tXddOl6oSXPmq1O_sxs/view
