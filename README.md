@@ -7,3 +7,7 @@ This is a coding challenges for online test I have 2 challenges for coding-chall
     + 2.2: Array Manipulation and Missing Number Problem
 
 * Note: Each folder has its own README file.
+
+* Some information about me:
+  * Phone: 0349568016
+  * Email: nguyensonghau27072003@gmail.com
